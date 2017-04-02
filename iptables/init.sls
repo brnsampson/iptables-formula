@@ -88,8 +88,8 @@
           - dport: {{ service_name }}
           - proto: {{ proto }}
           {%- if service_details.get('state') %}
-          - m: state
-          - state: {{ service_details['state'] }}
+          - match: state
+          - ctstate: {{ service_details['state'] }}
           {%- endif %}
           - save: True
           {{ comment }}
@@ -108,8 +108,8 @@
           - dport: {{ service_name }}
           - proto: {{ proto }}
           {%- if service_details.get('state') %}
-          - m: state
-          - state: {{ service_details['state'] }}
+          - match: state
+          - ctstate: {{ service_details['state'] }}
           {%- endif %}
           - save: True
           {{ comment }}
