@@ -22,6 +22,16 @@
     {%- if strict_mode %}
       # If the firewall is set to strict mode, we'll need to allow some 
       # that always need access to anything
+      iptables_allow_loopback:
+        iptables.append:
+          - table: filter
+          - chain: INPUT
+          - jump: ACCEPT
+          - source: 127.0.0.0/8
+          - destination: 127.0.0.0/8
+          - i: lo
+          - save: True
+
       iptables_allow_localhost:
         iptables.append:
           - table: filter
@@ -77,6 +87,10 @@
           - source: {{ ip }}
           - dport: {{ service_name }}
           - proto: {{ proto }}
+          {%- if service_details.get('state') %}
+          - m: state
+          - state: {{ service_details['state'] }}
+          {%- endif %}
           - save: True
           {{ comment }}
         {%- endfor %}
@@ -93,6 +107,10 @@
           {%- endif %}
           - dport: {{ service_name }}
           - proto: {{ proto }}
+          {%- if service_details.get('state') %}
+          - m: state
+          - state: {{ service_details['state'] }}
+          {%- endif %}
           - save: True
           {{ comment }}
       {%- endfor %}
