@@ -136,9 +136,11 @@
   # Generate rules for NAT
   {%- for rule in firewall.get('nat', []) %}  
     {%- if rule.get('dport', None) %}
-      iptables_{{rule['chain']}}_{{rule['jump']}}_{{rule['interface']}}_{{rule['dport']}}:
-    {%- else %}
+      iptables_{{rule['chain']}}_{{rule['jump']}}_{{rule['dport']}}:
+    {%- elif rule.get('interface', None) %}
       iptables_{{rule['chain']}}_{{rule['jump']}}_{{rule['interface']}}:
+    {%- else %}
+      iptables_{{rule['chain']}}_{{rule['jump']}}:
     {%- endif %}
         iptables.append:
           - table: nat 
