@@ -52,7 +52,7 @@
     {%- endif %}
 
   # Generate ipsets for all services that we have information about
-  {%- for service_name, service_details in firewall.get('services', {}).items() %}  
+  {%- for service_name, service_details in firewall.get('services', {}) %}  
     {% set block_nomatch = service_details.get('block_nomatch', False) %}
     {% set interfaces = service_details.get('interfaces','') %}
     {% set protos = service_details.get('protos',['tcp']) %}
@@ -135,21 +135,58 @@
 
   # Generate rules for NAT
   {%- for rule in firewall.get('nat', []) %}  
-    iptables_{{rule['interface']}}_allow_{{rule['source_ip']}}_{{rule['destination_ip']}}:
+    {%- if rule.get('source_port', None) and rule.get('destination_port') %}
+    iptables_{{rule['chain']}}_{{rule['jump']}}_{{rule['interface']}}_{{rule.get('source_ip', None)}}_{{rule.get('destination_ip', None)}}:
+    {%- else %}
+    iptables_{{rule['chain']}}_{{rule['jump']}}_{{rule['interface']}}:
+    {%- endif %}
       iptables.append:
         - table: nat 
-        - chain: {{ rule['chain'] }}
-        - jump: {{ rule['jump'] }}
+        - chain: {{ rule.get('chain', 'POSTROUTING') }}
+        - jump: {{ rule.get('jump', 'MASQUERADE') }}
+        {%- if rule.get('interface', None) %}
         - o: {{ rule['interface'] }} 
-        - source: {{ source_ip }}
-        - destination: {{ destination_ip }}
-        - save: True
+        {%- endif %}
+        {%- if rule.get('source_ip', None) %}
+        - source: {{ rule['source_ip'] }}
+        {%- endif %}
+        {%- if rule.get('destination_ip', None) %}
+        - destination: {{ rule['destination_ip'] }}
+        {%- endif %}
         {%- if rule.get('proto', None) %}
         - proto: {{ rule['proto'] }}
         {%- endif %}
         {%- if rule.get('dport', None) %}
         - dport: {{ rule['dport'] }}
         {%- endif %}
+        - save: True
+  {%- endfor %}
+
+  # Generate rules for forwarding
+  {%- for rule in firewall.get('forwarding', []) %}  
+    {%- if rule.get('source_port') %}
+    iptables_{{rule['interface']}}_forward_{{rule['source_ip']}}_{{rule['destination_ip']}}:
+    {%- else %}
+    iptables_{{rule['interface']}}_forward_{{rule['destination_ip']}}:
+    {%- endif %}
+      iptables.append:
+        - table: filter
+        - chain: FORWARD
+        - jump: ACCEPT
+        - destination: {{ rule['destination_ip'] }}
+        {%- if rule.get('interface', None) %}
+        - o: {{ rule['interface'] }} 
+        {%- endif %}
+        {%- if rule.get('source_ip', None) %}
+        - source: {{ rule['source_ip'] }}
+        {%- endif %}
+        {%- if rule.get('proto', None) %}
+        - proto: {{ rule['proto'] }}
+        {%- endif %}
+        {%- if rule.get('dport', None) %}
+        - dport: {{ rule['dport'] }}
+        {%- endif %}
+        - save: True
   {%- endfor %}
 
   # Generate rules for whitelisting IP classes
