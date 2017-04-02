@@ -52,7 +52,7 @@
     {%- endif %}
 
   # Generate ipsets for all services that we have information about
-  {%- for service_name, service_details in firewall.get('services', {}) %}  
+  {%- for service_name, service_details in firewall.get('services', {}).items() %}  
     {% set block_nomatch = service_details.get('block_nomatch', False) %}
     {% set interfaces = service_details.get('interfaces','') %}
     {% set protos = service_details.get('protos',['tcp']) %}
@@ -165,9 +165,9 @@
   # Generate rules for forwarding
   {%- for rule in firewall.get('forwarding', []) %}  
     {%- if rule.get('source_port') %}
-    iptables_{{rule['interface']}}_forward_{{rule['source_ip']}}_{{rule['destination_ip']}}:
+    iptables_forward_{{rule['source_ip']}}_{{rule['destination_ip']}}:
     {%- else %}
-    iptables_{{rule['interface']}}_forward_{{rule['destination_ip']}}:
+    iptables_forward_{{rule['destination_ip']}}:
     {%- endif %}
       iptables.append:
         - table: filter
