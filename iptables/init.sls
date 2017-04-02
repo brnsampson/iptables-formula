@@ -164,8 +164,8 @@
 
   # Generate rules for forwarding
   {%- for rule in firewall.get('forwarding', []) %}  
-    {%- if rule.get('source_port') %}
-      iptables_forward_{{rule['source_ip']}}_{{rule['destination_ip']}}:
+    {%- if rule.get('dport') %}
+      iptables_forward_{{rule['dport']}}_{{rule['destination_ip']}}:
     {%- else %}
       iptables_forward_{{rule['destination_ip']}}:
     {%- endif %}
