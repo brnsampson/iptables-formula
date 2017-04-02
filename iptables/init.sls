@@ -1,22 +1,4 @@
 # Firewall management module
-/etc/iptables:
-  file.directory:
-    - user: root
-    - group: root
-    - dirmode 755
-    - file_mode: 600
-    - recurse:
-      - user
-      - group
-      - mode
-
-/etc/iptables/rules.v4:
-  file.managed:
-    - user: root
-    - group: root
-    - mode: 600
-    
-
 {%- if salt['pillar.get']('firewall:enabled') %}
   {% set firewall = salt['pillar.get']('firewall', {}) %}
   {% set install = firewall.get('install', False) %}
