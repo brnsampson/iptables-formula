@@ -151,7 +151,7 @@
           - source: {{ rule['source_ip'] }}
           {%- endif %}
           {%- if rule.get('destination_ip', None) %}
-          - destination: {{ rule['destination_ip'] }}
+          - to-destination: {{ rule['destination_ip'] }}
           {%- endif %}
           {%- if rule.get('proto', None) %}
           - proto: {{ rule['proto'] }}
@@ -173,7 +173,7 @@
           - table: filter
           - chain: FORWARD
           - jump: ACCEPT
-          - to-destination: {{ rule['destination_ip'] }}
+          - destination: {{ rule['destination_ip'] }}
           {%- if rule.get('interface', None) %}
           - o: {{ rule['interface'] }} 
           {%- endif %}
