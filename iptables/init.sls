@@ -71,9 +71,9 @@
           - table: filter
           - chain: INPUT
           - jump: ACCEPT
-          {%- if interfaces }
+          {%- if interfaces %}
           - i: {{ ','.join(interfaces) }}
-          {% endif }
+          {%- endif %}
           - source: {{ ip }}
           - dport: {{ service_name }}
           - proto: {{ proto }}
@@ -88,9 +88,9 @@
           - table: filter
           - chain: INPUT
           - jump: ACCEPT
-          {%- if interfaces }
+          {%- if interfaces %}
           - i: {{ ','.join(interfaces) }}
-          {% endif }
+          {%- endif %}
           - dport: {{ service_name }}
           - proto: {{ proto }}
           - save: True
