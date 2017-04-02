@@ -108,8 +108,9 @@ You can use nat for interface.
   # iptables -t nat -A POSTROUTING -o eth0 -s 192.168.18.0/24 -d 10.20.0.2 -j MASQUERADE
 
   nat:
-    eth0:
-      rules:
-        '192.168.18.0/24':
-          - 10.20.0.2
+    - chain: POSTROUTING
+      jump: MASQUERADE
+      interface: eth0
+      source_ip: '192.168.18.0/24'
+      destination_ip: '10.20.0.2'
 ```

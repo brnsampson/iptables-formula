@@ -134,20 +134,22 @@
   {%- endfor %}
 
   # Generate rules for NAT
-  {%- for service_name, service_details in firewall.get('nat', {}).items() %}  
-    {%- for ip_s, ip_ds in service_details.get('rules', {}).items() %}
-      {%- for ip_d in ip_ds %}
-      iptables_{{service_name}}_allow_{{ip_s}}_{{ip_d}}:
-        iptables.append:
-          - table: nat 
-          - chain: POSTROUTING 
-          - jump: MASQUERADE
-          - o: {{ service_name }} 
-          - source: {{ ip_s }}
-          - destination: {{ ip_d }}
-          - save: True
-      {%- endfor %}
-    {%- endfor %}
+  {%- for rule in firewall.get('nat', []) %}  
+    iptables_{{rule['interface']}}_allow_{{rule['source_ip']}}_{{rule['destination_ip']}}:
+      iptables.append:
+        - table: nat 
+        - chain: {{ rule['chain'] }}
+        - jump: {{ rule['jump'] }}
+        - o: {{ rule['interface'] }} 
+        - source: {{ source_ip }}
+        - destination: {{ destination_ip }}
+        - save: True
+        {%- if rule.get('proto', None) %}
+        - proto: {{ rule['proto'] }}
+        {%- endif %}
+        {%- if rule.get('dport', None) %}
+        - dport: {{ rule['dport'] }}
+        {%- endif %}
   {%- endfor %}
 
   # Generate rules for whitelisting IP classes
