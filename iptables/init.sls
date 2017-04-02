@@ -89,7 +89,7 @@
           - proto: {{ proto }}
           {%- if service_details.get('state') %}
           - match: state
-          - ctstate: {{ service_details['state'] }}
+          - connstate: {{ service_details['state'] }}
           {%- endif %}
           - save: True
           {{ comment }}
@@ -109,7 +109,7 @@
           - proto: {{ proto }}
           {%- if service_details.get('state') %}
           - match: state
-          - ctstate: {{ service_details['state'] }}
+          - connstate: {{ service_details['state'] }}
           {%- endif %}
           - save: True
           {{ comment }}
