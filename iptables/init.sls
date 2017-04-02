@@ -63,38 +63,40 @@
     {% endif %}
 
     # Allow rules for ips/subnets
-    {%- for ip in service_details.get('ips_allow', []) %}
-      {%- if interfaces == '' %}
+    {%- if service_details.get('ips_allow', []) %}
+      {%- for ip in service_details.get('ips_allow', []) %}
         {%- for proto in protos %}
       iptables_{{service_name}}_allow_{{ip}}_{{proto}}:
         iptables.append:
           - table: filter
           - chain: INPUT
           - jump: ACCEPT
+          {%- if interfaces }
+          - i: {{ ','.join(interfaces) }}
+          {% endif }
           - source: {{ ip }}
           - dport: {{ service_name }}
           - proto: {{ proto }}
           - save: True
           {{ comment }}
         {%- endfor %}
-      {%- else %}
-        {%- for interface in interfaces %}
-          {%- for proto in protos %}
-      iptables_{{service_name}}_allow_{{ip}}_{{proto}}_{{interface}}:
+      {%- endfor %}
+    {%- else }
+      {%- for proto in protos %}
+      iptables_{{service_name}}_allow_{{proto}}:
         iptables.append:
           - table: filter
           - chain: INPUT
           - jump: ACCEPT
-          - i: {{ interface }}
-          - source: {{ ip }}
+          {%- if interfaces }
+          - i: {{ ','.join(interfaces) }}
+          {% endif }
           - dport: {{ service_name }}
           - proto: {{ proto }}
           - save: True
           {{ comment }}
-          {%- endfor %}
-        {%- endfor %}
-      {%- endif %}
-    {%- endfor %}
+      {%- endfor %}
+    {%- endif }
 
     {%- if not strict_mode and global_block_nomatch or block_nomatch %}
       # If strict mode is disabled we may want to block anything else
