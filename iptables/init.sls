@@ -81,7 +81,7 @@
           {{ comment }}
         {%- endfor %}
       {%- endfor %}
-    {%- else }
+    {%- else %}
       {%- for proto in protos %}
       iptables_{{service_name}}_allow_{{proto}}:
         iptables.append:
@@ -96,7 +96,7 @@
           - save: True
           {{ comment }}
       {%- endfor %}
-    {%- endif }
+    {%- endif %}
 
     {%- if not strict_mode and global_block_nomatch or block_nomatch %}
       # If strict mode is disabled we may want to block anything else
