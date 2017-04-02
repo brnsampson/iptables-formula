@@ -173,7 +173,7 @@
           - table: filter
           - chain: FORWARD
           - jump: ACCEPT
-          - destination: {{ rule['destination_ip'] }}
+          - to-destination: {{ rule['destination_ip'] }}
           {%- if rule.get('interface', None) %}
           - o: {{ rule['interface'] }} 
           {%- endif %}
