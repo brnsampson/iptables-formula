@@ -87,7 +87,7 @@
             {%- set name = name + '_{}:{}'.format(key_name, value) %}
           {%- endfor %}
         {%- endfor %}
-        {%- for key_name, value in chain_spec.get(extension_parameters, {}).items() %}
+        {%- for key_name, value in chain_spec.get('extension_parameters', {}).items() %}
           {%- set name = name + '_{}:{}'.format(key_name, value) %}
         {%- endfor %}
       iptables_{{name}}:
