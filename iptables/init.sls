@@ -61,6 +61,55 @@
             - iptables: iptables_allow_established
     {%- endif %}
 
+  # Create rule sets. The hierarchy is table -> chain -> {{default options}, [match], {extension options}}
+  {%- for table_name, chains in firewall.get('tables', {}).items() %}
+    {%- for chain_name, chain_spec %}
+      {%- set name = '{}_{}'.format(table_name, chain_name) %}
+      {%- if chain_spec.get('proto') %}
+        {%- set name = name + '_{}'.format(chain_spec['proto']) %}
+      {%- endif %}
+      {%- if chain_spec.get('proto') %}
+        {%- set name = name + '_{}'.format(chain_spec['proto']) %}
+      {%- endif %}
+      {%- if chain_spec.get('in-interface') %}
+        {%- set name = name + '_{}'.format(chain_spec['in-interface']) %}
+      {%- endif %}
+      {%- if chain_spec.get('out-interface') %}
+        {%- set name = name + '_{}'.format(chain_spec['out-interface']) %}
+      {%- endif %}
+      {%- if chain_spec.get('source') %}
+        {%- set name = name + '_{}'.format(chain_spec['source']) %}
+      {%- endif %}
+      {%- if chain_spec.get('destination') %}
+        {%- set name = name + '_{}'.format(chain_spec['destination']) %}
+      {%- endif %}
+      {%- set name = name + '_{}'.format(chain_spec['jump']) %}
+        iptables_{{name}}:
+          iptables.append:
+            - table: {{ table_name }}
+            - chain: {{ chain_name }}
+            - jump: {{ chain_spec['jump'] }}
+            - proto: {{ chain_spec.get('proto') }}
+            - in-interface: {{ chain_spec.get('in-interface') }}
+            - out-interface: {{ chain_spec.get('out-interface') }}
+            - source: {{ chain_spec.get('source') }}
+            - destination {{ chain_spec.get('destination') }}
+      {%- if chan_spec.get('match', {}) %}
+        {%- set match_names = [] %}
+        {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
+          {%- match_names.append(match_name) %}
+          {%- for key_name, value in match_spec.items() %}
+            - {{ key_name }}: {{ value }}
+          {%- endfor %}
+            - match: {{ match_names }}
+        {%- endfor %}
+      {%- endif %}
+      {%- for key_name, value chain_spec.get('extension_parameters', {}).items() %}
+            - {{ key_name }}: {{ value }}
+      {%- endfor %}
+    {%- endfor %}
+  {%- endfor %}
+
   # Generate ipsets for all services that we have information about
   {%- for service_name, service_details in firewall.get('services', {}).items() %}  
     {% set block_nomatch = service_details.get('block_nomatch', False) %}
