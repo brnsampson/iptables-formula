@@ -85,28 +85,28 @@
           {%- set name = name + '_{}'.format(chain_spec['destination']) %}
         {%- endif %}
         {%- set name = name + '_{}'.format(chain_spec['jump']) %}
-        iptables_{{name}}:
-          iptables.append:
-            - table: {{ table_name }}
-            - chain: {{ chain_name }}
-            - jump: {{ chain_spec['jump'] }}
-            - proto: {{ chain_spec.get('proto') }}
-            - in-interface: {{ chain_spec.get('in-interface') }}
-            - out-interface: {{ chain_spec.get('out-interface') }}
-            - source: {{ chain_spec.get('source') }}
-            - destination {{ chain_spec.get('destination') }}
+      iptables_{{name}}:
+        iptables.append:
+          - table: {{ table_name }}
+          - chain: {{ chain_name }}
+          - jump: {{ chain_spec['jump'] }}
+          - proto: {{ chain_spec.get('proto') }}
+          - in-interface: {{ chain_spec.get('in-interface') }}
+          - out-interface: {{ chain_spec.get('out-interface') }}
+          - source: {{ chain_spec.get('source') }}
+          - destination {{ chain_spec.get('destination') }}
         {%- if chain_spec.get('match', {}) %}
           {%- set match_names = [] %}
           {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
             {%- do match_names.append(match_name) %}
             {%- for key_name, value in match_spec.items() %}
-            - {{ key_name }}: {{ value }}
+          - {{ key_name }}: {{ value }}
             {%- endfor %}
-            - match: {{ match_names }}
+          - match: {{ match_names }}
           {%- endfor %}
         {%- endif %}
         {%- for key_name, value in chain_spec.get('extension_parameters', {}).items() %}
-            - {{ key_name }}: {{ value }}
+          - {{ key_name }}: {{ value }}
         {%- endfor %}
       {%- endfor %}
     {%- endfor %}
