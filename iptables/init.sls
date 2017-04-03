@@ -67,19 +67,19 @@
       {%- for chain_spec in chain_specs %}
         {%- set name = '{}_{}_{}'.format(table_name, chain_name, chain_spec['jump']) %}
         {%- if chain_spec.get('proto') %}
-          {%- do name = name + '_proto:{}'.format(chain_spec['proto']) %}
+          {%- set name = name + '_proto:{}'.format(chain_spec['proto']) %}
         {%- endif %}
         {%- if chain_spec.get('in-interface') %}
-          {%- do name = name + '_in-interface:{}'.format(chain_spec['in-interface']) %}
+          {%- set name = name + '_in-interface:{}'.format(chain_spec['in-interface']) %}
         {%- endif %}
         {%- if chain_spec.get('out-interface') %}
-          {%- do name = name + '_out-interface:{}'.format(chain_spec['out-interface']) %}
+          {%- set name = name + '_out-interface:{}'.format(chain_spec['out-interface']) %}
         {%- endif %}
         {%- if chain_spec.get('source') %}
-          {%- do name = name + '_source:{}'.format(chain_spec['source']) %}
+          {%- set name = name + '_source:{}'.format(chain_spec['source']) %}
         {%- endif %}
         {%- if chain_spec.get('destination') %}
-          {%- do name = name + '_destination:{}'.format(chain_spec['destination']) %}
+          {%- set name = name + '_destination:{}'.format(chain_spec['destination']) %}
         {%- endif %}
         {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
           {%- do name = name + '_match:{}'.format(match_name) %}
