@@ -65,23 +65,31 @@
   {%- for table_name, chains in firewall.get('tables', {}).items() %}
     {%- for chain_name, chain_specs in chains.items() %}
       {%- for chain_spec in chain_specs %}
-        {%- set name = '{}_{}'.format(table_name, chain_name) %}
+        {%- set name = '{}_{}_{}'.format(table_name, chain_name, chain_spec['jump']) %}
         {%- if chain_spec.get('proto') %}
-          {%- set name = name + '_{}'.format(chain_spec['proto']) %}
+          {%- set name = name + '_proto:{}'.format(chain_spec['proto']) %}
         {%- endif %}
         {%- if chain_spec.get('in-interface') %}
-          {%- set name = name + '_{}'.format(chain_spec['in-interface']) %}
+          {%- set name = name + '_in-interface:{}'.format(chain_spec['in-interface']) %}
         {%- endif %}
         {%- if chain_spec.get('out-interface') %}
-          {%- set name = name + '_{}'.format(chain_spec['out-interface']) %}
+          {%- set name = name + '_out-interface:{}'.format(chain_spec['out-interface']) %}
         {%- endif %}
         {%- if chain_spec.get('source') %}
-          {%- set name = name + '_{}'.format(chain_spec['source']) %}
+          {%- set name = name + '_source:{}'.format(chain_spec['source']) %}
         {%- endif %}
         {%- if chain_spec.get('destination') %}
-          {%- set name = name + '_{}'.format(chain_spec['destination']) %}
+          {%- set name = name + '_destination:{}'.format(chain_spec['destination']) %}
         {%- endif %}
-        {%- set name = name + '_{}'.format(chain_spec['jump']) %}
+        {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
+          {%- set name = name + '_match:{}'.format(match_name) %}
+          {%- for key_name, value in match_spec.items() %}
+            {%- set name = name + '_{}:{}'.format(key_name, value) %}
+          {%- endfor %}
+        {%- endfor %}
+        {%- for key_name, value in chain_spec.get(extension_parameters, {}).items() %}
+          {%- set name = name + '_{}:{}'.format(key_name, value) %}
+        {%- endfor %}
       iptables_{{name}}:
         iptables.append:
           - table: {{ table_name }}
