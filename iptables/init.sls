@@ -41,10 +41,19 @@
           - save: True
 
       # Allow related/established sessions
-      iptables_allow_established:
+      iptables_INPUT_allow_established:
         iptables.append:
           - table: filter
           - chain: INPUT
+          - jump: ACCEPT
+          - match: conntrack
+          - ctstate: 'RELATED,ESTABLISHED'
+          - save: True
+
+      iptables_FORWARD_allow_established:
+        iptables.append:
+          - table: filter
+          - chain: FORWARD
           - jump: ACCEPT
           - match: conntrack
           - ctstate: 'RELATED,ESTABLISHED'
@@ -58,12 +67,14 @@
           - policy: DROP
           - require:
             - iptables: iptables_allow_localhost
-            - iptables: iptables_allow_established
+            - iptables: iptables_INPUT_allow_established
       enable_FORWARD_reject_policy:
         iptables.set_policy:
           - table: filter
           - chain: FORWARD
           - policy: DROP
+          - require:
+            - iptables: iptables_FORWARD_allow_established
     {%- endif %}
 
   # Create rule sets. The hierarchy is table -> chain -> [{default options}, [match], {extension options}]
