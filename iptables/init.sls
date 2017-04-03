@@ -98,7 +98,7 @@
         {%- if chan_spec.get('match', {}) %}
           {%- set match_names = [] %}
           {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
-            {%- match_names.append(match_name) %}
+            {%- do match_names.append(match_name) %}
             {%- for key_name, value in match_spec.items() %}
             - {{ key_name }}: {{ value }}
             {%- endfor %}
