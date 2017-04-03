@@ -90,11 +90,21 @@
           - table: {{ table_name }}
           - chain: {{ chain_name }}
           - jump: {{ chain_spec['jump'] }}
+        {%- if chain_spec.get('proto') %}
           - proto: {{ chain_spec.get('proto') }}
+        {%- endif %}
+        {%- if chain_spec.get('in-interface') %}
           - in-interface: {{ chain_spec.get('in-interface') }}
+        {%- endif %}
+        {%- if chain_spec.get('out-interface') %}
           - out-interface: {{ chain_spec.get('out-interface') }}
+        {%- endif %}
+        {%- if chain_spec.get('source') %}
           - source: {{ chain_spec.get('source') }}
+        {%- endif %}
+        {%- if chain_spec.get('destination') %}
           - destination: {{ chain_spec.get('destination') }}
+        {%- endif %}
         {%- if chain_spec.get('match', {}) %}
           {%- set match_names = [] %}
           {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
