@@ -65,32 +65,32 @@
   {%- for table_name, chains in firewall.get('tables', {}).items() %}
     {%- for chain_name, chain_specs in chains.items() %}
       {%- for chain_spec in chain_specs %}
-        {%- set name = '{}_{}_{}'.format(table_name, chain_name, chain_spec['jump']) %}
+        {%- set name_list = [table_name, chain_name, chain_spec['jump']] %}
         {%- if chain_spec.get('proto') %}
-          {%- set name = name + '_proto:{}'.format(chain_spec['proto']) %}
+          {%- name_list.append('_proto:{}'.format(chain_spec['proto'])) %}
         {%- endif %}
         {%- if chain_spec.get('in-interface') %}
-          {%- set name = name + '_in-interface:{}'.format(chain_spec['in-interface']) %}
+          {%- name_list.append('_in-interface:{}'.format(chain_spec['in-interface'])) %}
         {%- endif %}
         {%- if chain_spec.get('out-interface') %}
-          {%- set name = name + '_out-interface:{}'.format(chain_spec['out-interface']) %}
+          {%- name_list.append('_out-interface:{}'.format(chain_spec['out-interface'])) %}
         {%- endif %}
         {%- if chain_spec.get('source') %}
-          {%- set name = name + '_source:{}'.format(chain_spec['source']) %}
+          {%- name_list.append('_source:{}'.format(chain_spec['source'])) %}
         {%- endif %}
         {%- if chain_spec.get('destination') %}
-          {%- set name = name + '_destination:{}'.format(chain_spec['destination']) %}
+          {%- name_list.append('_destination:{}'.format(chain_spec['destination'])) %}
         {%- endif %}
         {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
-          {%- do name = name + '_match:{}'.format(match_name) %}
+          {%- do name_list.append('_match:{}'.format(match_name)) %}
           {%- for key_name, value in match_spec.items() %}
-            {%- do name = name + '_{}:{}'.format(key_name, value) %}
+            {%- do name_list.append('_{}:{}'.format(key_name, value)) %}
           {%- endfor %}
         {%- endfor %}
         {%- for key_name, value in chain_spec.get('extension_parameters', {}).items() %}
-          {%- do name = name + '_{}:{}'.format(key_name, value) %}
+          {%- do name_list.append('_{}:{}'.format(key_name, value)) %}
         {%- endfor %}
-      iptables_{{name}}:
+      iptables_{{ '_'.join(name_list) }}:
         iptables.append:
           - table: {{ table_name }}
           - chain: {{ chain_name }}
