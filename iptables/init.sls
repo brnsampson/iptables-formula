@@ -69,9 +69,6 @@
         {%- if chain_spec.get('proto') %}
           {%- set name = name + '_{}'.format(chain_spec['proto']) %}
         {%- endif %}
-        {%- if chain_spec.get('proto') %}
-          {%- set name = name + '_{}'.format(chain_spec['proto']) %}
-        {%- endif %}
         {%- if chain_spec.get('in-interface') %}
           {%- set name = name + '_{}'.format(chain_spec['in-interface']) %}
         {%- endif %}
