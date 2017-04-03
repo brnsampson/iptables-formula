@@ -105,7 +105,7 @@
             - match: {{ match_names }}
           {%- endfor %}
         {%- endif %}
-        {%- for key_name, value chain_spec.get('extension_parameters', {}).items() %}
+        {%- for key_name, value in chain_spec.get('extension_parameters', {}).items() %}
             - {{ key_name }}: {{ value }}
         {%- endfor %}
       {%- endfor %}
