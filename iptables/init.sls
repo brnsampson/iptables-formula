@@ -51,7 +51,7 @@
           - save: True            
 
       # Set the policy to deny everything unless defined
-      enable_reject_policy:
+      enable_INPUT_reject_policy:
         iptables.set_policy:
           - table: filter
           - chain: INPUT
@@ -59,6 +59,11 @@
           - require:
             - iptables: iptables_allow_localhost
             - iptables: iptables_allow_established
+      enable_FORWARD_reject_policy:
+        iptables.set_policy:
+          - table: filter
+          - chain: FORWARD
+          - policy: DROP
     {%- endif %}
 
   # Create rule sets. The hierarchy is table -> chain -> [{default options}, [match], {extension options}]
