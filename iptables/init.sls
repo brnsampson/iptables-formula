@@ -64,7 +64,7 @@
   # Create rule sets. The hierarchy is table -> chain -> [{default options}, [match], {extension options}]
   {%- for table_name, chains in firewall.get('tables', {}).items() %}
     {%- for chain_name, chain_specs in chains.items() %}
-      {%- for chain_spec chain_specs %}
+      {%- for chain_spec in chain_specs %}
         {%- set name = '{}_{}'.format(table_name, chain_name) %}
         {%- if chain_spec.get('proto') %}
           {%- set name = name + '_{}'.format(chain_spec['proto']) %}
