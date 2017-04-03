@@ -84,11 +84,11 @@
         {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
           {%- do name_list.append('_match:{}'.format(match_name)) %}
           {%- for key_name, value in match_spec.items() %}
-            {%- do name_list.append('_{}:{}'.format(key_name, value)) %}
+            {%- do name_list.append('{}:{}'.format(key_name, value)) %}
           {%- endfor %}
         {%- endfor %}
         {%- for key_name, value in chain_spec.get('extension_parameters', {}).items() %}
-          {%- do name_list.append('_{}:{}'.format(key_name, value)) %}
+          {%- do name_list.append('{}:{}'.format(key_name, value)) %}
         {%- endfor %}
       iptables_{{ '_'.join(name_list) }}:
         iptables.append:
