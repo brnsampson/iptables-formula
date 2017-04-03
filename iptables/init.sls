@@ -123,6 +123,7 @@
         {%- for key_name, value in chain_spec.get('extension_parameters', {}).items() %}
           - {{ key_name }}: {{ value }}
         {%- endfor %}
+          - save: True
       {%- endfor %}
     {%- endfor %}
   {%- endfor %}
