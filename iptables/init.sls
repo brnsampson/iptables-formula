@@ -95,7 +95,7 @@
             - out-interface: {{ chain_spec.get('out-interface') }}
             - source: {{ chain_spec.get('source') }}
             - destination {{ chain_spec.get('destination') }}
-        {%- if chan_spec.get('match', {}) %}
+        {%- if chain_spec.get('match', {}) %}
           {%- set match_names = [] %}
           {%- for match_name, match_spec in chain_spec.get('match', {}).items() %}
             {%- do match_names.append(match_name) %}
